@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Sederhana</title>
+	<!-- <script src="https://unpkg.com/vue@3"></script>  -->
+	<script src="./Vue.js"></script>
+	<link rel="stylesheet" type="text/css" href="./normalize.css">
+	<link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+<body>
+	<div id="app"></div>
+	<script>
+		const { createApp } = Vue
+		createApp({
+			data:() => ({
+				iMe:0,
+				iAcak:0,
+				inputNumber:1,
+				disabled: false,
+				toggleButton: true,
+				inputAcak: Math.floor(Math.random() * 10) + 1,
+				minWidth:10,
+				minWidthAcak:10,
+				timeMe:0,
+				timeAcak:0,
+			}),
+			methods: {
+				move() {
+				  if (this.iMe == 0 && this.iMe == 0) {
+				    this.iMe = 1;
+				    let self = this
+			    	this.timeMe = 0;
+			    	this.timeAcak = 0;
+				    this.iAcak = 1;
+				    let widthAcak = 10;
+				    let elem = document.getElementById("progressBarMe");
+				    let carGreen = document.getElementById("carGreen");
+				    let carRed = document.getElementById("carRed");
+				    let elemAcak = document.getElementById("progressBarRandom");
+				    let id = setInterval(frame, 1000 * this.inputNumber);
+				    let idAcak = setInterval(frameAcak, 1000 * this.inputAcak);
+				    function frame() {
+				      if (self.minWidth >= 100) {
+				        clearInterval(id);
+					    self.minWidth = 100;
+				        self.disabled = false
+				      } else {
+				      	console.log('frame min-width ', self.minWidth)
+				        self.minWidth += 10;
+				        self.timeMe += self.inputNumber;
+				      	carGreen.style.left = self.minWidth + '%';
+				        elem.style.width = self.minWidth + "%";
+				        elem.innerHTML = 'Saya - ' + self.minWidth + "%";
+				       	self.disabled = true
+				      }
+				    }
+				    function frameAcak() {
+				      if (self.minWidthAcak >= 100) {
+				        clearInterval(idAcak);
+					    self.minWidthAcak = 100;
+				        self.disabled = false
+				      } else {
+				      	console.log('frame min-width acak ', self.minWidthAcak)
+				        self.minWidthAcak += 10;
+				        self.timeAcak += self.inputAcak;
+				      	carRed.style.left = self.minWidthAcak + '%';
+				        elemAcak.style.width = self.minWidthAcak + "%";
+				        elemAcak.innerHTML = 'Acak - ' + self.minWidthAcak + "%";
+				        self.disabled = true
+				      }
+				    }
+				  }
+				  this.toggleButton = false
+				},
+				reset(){
+				    if (this.iMe == 1 && this.iAcak == 1) {
+				    	this.iMe = 0;
+				    	this.iAcak = 0;
+				    	this.timeMe = 0;
+				    	this.timeAcak = 0;
+				    	let self = this;
+				    	let elemMe = document.getElementById("progressBarMe");
+				    	let elemAcak = document.getElementById("progressBarRandom");
+					    let carGreen = document.getElementById("carGreen");
+					    let carRed = document.getElementById("carRed");
+					    let id = setInterval(frame, 1000 * this.inputNumber);
+				    	let idAcak = setInterval(frameAcak, 1000 * this.inputAcak);
+					    function frame() {
+					      if (self.minWidth <= 10) {
+					        clearInterval(id);
+					        self.disabled = false
+					        elemMe.innerHTML = 'Saya' ;
+					        self.minWidth = 10;
+					      } else {
+					        self.minWidth -= 10;
+				    		self.timeMe += self.inputNumber;
+				      		console.log('frame max-width ', self.minWidth)
+				      		carGreen.style.left = self.minWidth + '%';
+					        elemMe.style.width = self.minWidth + "%";
+					        elemMe.innerHTML = 'Saya - ' + self.minWidth + '%' ;
+					       	self.disabled = true
+					      }
+					    }
+
+					    function frameAcak() {
+					      if (self.minWidthAcak <= 10) {
+					        clearInterval(idAcak);
+					        elemAcak.innerHTML = 'Acak' ;
+					        self.disabled = false
+					        self.minWidthAcak = 10;
+					      } else {
+					        self.minWidthAcak -= 10;
+					        self.timeAcak += self.inputAcak;
+					        carRed.style.left = self.minWidthAcak + "%";
+					        elemAcak.style.width = self.minWidthAcak + "%";
+					        elemAcak.innerHTML = 'Acak - ' + self.minWidthAcak + '%';
+					        self.disabled = true
+					      }
+					    }
+					    this.toggleButton = true
+				    }
+				},
+				randomAcak(){
+					this.inputAcak = Math.floor(Math.random() * 10) + 1;
+				}
+			},
+			template: `
+				<div>
+					<div class="container">
+						<div class="left-box">
+							<p style="margin-bottom:30px;">Simulasi berjalan mobil memakai waktu. saya: {{ inputNumber }} detik,  acak: {{ inputAcak }} detik. Waktu saya: {{ timeMe }} detik, acak: {{ timeAcak }} detik </p>
+							<div style="position:relative;">
+								<img id="carGreen" src="./assets/car-green.svg" style="width:30px;height:30px; position:absolute;left:10%;top:0%;"/>
+								<div class="myProgress">
+									<div id="progressBarMe">10%</div>
+								</div>
+							</div>
+							<div style="position:relative;">
+								<img id="carRed" src="./assets/car-red.svg" style="width:30px;height:30px; position:absolute;left:10%;top:0%;"/>
+								<div class="myProgress">
+									<div id="progressBarRandom">10%</div>
+								</div>
+							</div>
+						</div>
+						<div class="right-box">
+							<div class="inputMax">
+								<label>Berapa detik ?</label>
+								<input :disabled="disabled" type="number" class="inputNumber"  v-model="inputNumber"  min="1" step="1" max="10" />
+								<button @click="move" v-if="toggleButton" style="margin-bottom:5px;">Mulai</button>
+								<button @click="reset" :disabled="disabled" v-else style="margin-bottom:5px;">Reset</button>
+								<button @click="randomAcak" :disabled="disabled">Angka Acak</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			`,
+		}).mount('#app')
+	</script>
+</body>
+</html>
